@@ -1,0 +1,151 @@
+[{
+        'identification': {
+            'id': '22788522',
+            'row': 4951398093,
+            'number': {
+                'default': '5X2915',
+                'alternative': None
+            },
+            'callsign': 'UPS2915',
+            'codeshare': None
+        },
+        'status': {
+            'live': True,
+            'text': 'Estimated 11: 59',
+            'icon': 'green',
+            'estimated': None,
+            'ambiguous': False,
+            'generic': {
+                'status': {
+                    'text': 'estimated',
+                    'type': 'arrival',
+                    'color': 'green',
+                    'diverted': None
+                },
+                'eventTime': {
+                    'utc': 1571068770,
+                    'local': 1571054370
+                }
+            }
+        },
+        'aircraft': {
+            'model': {
+                'code': 'MD11',
+                'text': 'McDonnell Douglas MD-11F'
+            },
+            'registration': 'N296UP',
+            'country': {
+                'id': 236,
+                'name': 'United States',
+                'alpha2': 'US',
+                'alpha3': 'USA'
+            },
+            'hex': 'A30D94',
+            'restricted': False,
+            'serialNo': '48474',
+            'age': {
+                'availability': True,
+                'date': 'Dec 1991',
+                'years': 27,
+                'months': 10,
+                'days': 13,
+                'testflight': False
+            },
+            'availability': {
+                'serialNo': True,
+                'age': True
+            }
+        },
+        'owner': {
+            'name': 'UPS Airlines',
+            'code': {
+                'iata': '5X',
+                'icao': 'UPS'
+            }
+        },
+        'airline': {
+            'name': 'UPS',
+            'code': {
+                'iata': '5X',
+                'icao': 'UPS'
+            },
+            'short': 'UPS Airlines'
+        },
+        'airport': {
+            'origin': {
+                'name': 'Ontario International Airport',
+                'code': {
+                    'iata': 'ONT',
+                    'icao': 'KONT'
+                },
+                'position': {
+                    'latitude': 34.056,
+                    'longitude': -117.600998,
+                    'country': {
+                        'name': 'United States',
+                        'code': 'US',
+                        'id': 236
+                    },
+                    'region': {
+                        'city': 'Ontario'
+                    }
+                },
+                'timezone': {
+                    'name': 'America/Los_Angeles',
+                    'offset': -25200,
+                    'abbr': 'PDT',
+                    'abbrName': 'Pacific Daylight Time',
+                    'isDst': True
+                },
+                'visible': True
+            },
+            'destination': {
+                'name': 'Louisville International Airport',
+                'code': {
+                    'iata': 'SDF',
+                    'icao': 'KSDF'
+                },
+                'position': {
+                    'latitude': 38.17408,
+                    'longitude': -85.736397,
+                    'country': {
+                        'name': 'United States',
+                        'code': 'US',
+                        'id': 236
+                    },
+                    'region': {
+                        'city': 'Louisville'
+                    }
+                },
+                'timezone': {
+                    'name': 'America/Kentucky/Louisville',
+                    'offset': -14400,
+                    'abbr': 'EDT',
+                    'abbrName': 'Eastern Daylight Time',
+                    'isDst': True
+                },
+                'visible': True
+            },
+            'real': None
+        },
+        'time': {
+            'scheduled': {
+                'departure': 1571056200,
+                'arrival': 1571069100
+            },
+            'real': {
+                'departure': 1571056983,
+                'arrival': None
+            },
+            'estimated': {
+                'departure': None,
+                'arrival': 1571068770
+            },
+            'other': {
+                'eta': 1571068770,
+                'updated': 1571057065,
+                'duration': None
+            }
+        }
+    },
+]
