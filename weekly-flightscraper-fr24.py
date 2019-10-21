@@ -65,7 +65,6 @@ CompetenciaList = [
 
 # Start timer
 startTimer = datetime.now()
-WeekToday=startTimer.isocalendar()[1]
 
 msg = ("\n{}\n{}\n{}\n".format("- "*20, startTimer.strftime('%Y-%m-%d %H:%M:%S'),"Starting New Process ..."))
 
