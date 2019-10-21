@@ -65,6 +65,7 @@ CompetenciaList = [
 
 # Start timer
 startTimer = datetime.now()
+WeekToday=startTimer.isocalendar()[1]
 
 msg = ("\n{}\n{}\n{}\n".format("- "*20, startTimer.strftime('%Y-%m-%d %H:%M:%S'),"Starting New Process ..."))
 
@@ -151,7 +152,7 @@ for num in loopRange:
             # fill named data in list
             callsn = row['identification']['callsign'] # callsign
             fltnum = row['identification']['number']['default'] # flight number
-            status = row['status']['text'] # status
+            statusRaw = row['status']['text'] # status
 
             deptime1 = row['time']['real']['departure'] # utc of event
             deptime = None if deptime1 == None else datetime.fromtimestamp(deptime1).strftime('%Y-%m-%d %H:%M:%S')
@@ -186,7 +187,7 @@ for num in loopRange:
                               arrtime,
                               deplocaltime,
                               arrlocaltime,
-                              status])
+                              statusRaw])
 
     count=num+1
     rgnTime=processTime(numTimer)
@@ -215,15 +216,21 @@ AircraftItinerario = pd.DataFrame(datatable,
                                                 'ArrivalUTC',
                                                 'DepartureLT',
                                                 'ArrivalLT',
-                                                'Status'])
+                                                'StatusRaw'])
 
 AircraftItinerario['Week']=[x.week for x in pd.to_datetime(AircraftItinerario['DepartureUTC'])]
 
 def reTime(x):
     return re.search('\d{2}:\d{2}', x)
 
-AircraftItinerario['StatusTime']= [reTime(x).group(0) if reTime(x) else "-" for x in AircraftItinerario['Status']]
-AircraftItinerario['StatusClean']= [re.search('[A-Z|a-z]+', x).group(0) if reTime(x) else "-" for x in AircraftItinerario['Status']]
+AircraftItinerario['Status']= [re.search('[A-Z|a-z]+', x).group(0) if reTime(x) else "-" for x in AircraftItinerario['StatusRaw']]
+AircraftItinerario['StatusTime']= [reTime(x).group(0) if reTime(x) else "-" for x in AircraftItinerario['StatusRaw']]
 
-csv_name = 'CompRgnW41.csv'
-AircraftItinerario.query("Week in [39, 40, 41]").to_csv(csv_name, index=False)
+WeekToday=startTimer.isocalendar()[1]
+InfoWeek=startTimer.isocalendar()[1]-1
+InfoWeekRange=list(range(InfoWeek-2, InfoWeek+1))
+
+csv_name = f'CompRgnW{InfoWeek}.csv'
+AircraftItinerario.query(f"Week in {InfoWeekRange}")\
+    .drop(['statusRaw'], axis=1)\
+    .to_csv(csv_name, index=False)
