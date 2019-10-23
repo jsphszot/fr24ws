@@ -2,7 +2,7 @@
 flightradar24 web scrapers using python
 
 
-<h6>pastflights-flightscraper-fr24.py</h6>
+<h6>pastflights-scraper-fr24.py</h6>
 Input is a list of Airline codes which are used to scrape all registration numbers per airline on the page, which are then used to scrape flight info for each airplane. 
 Output is a data frame with arrival/departure time and airport, as well as flight status. 
 
