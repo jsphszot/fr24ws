@@ -274,10 +274,8 @@ for rgn in miaflights:
         rtg="-".join(castor2.Org)
 
         rgninfo2=[dwk, rtg, dep, arv]
-
         ruteoList.append(rgninfo + rgninfo2)
 
 RuteoCols=['Competidor', 'MatriculaAvion', 'WeekDep', 'Ruteo', 'FechaDep', 'FechaArr',]
 RuteoDF=pd.DataFrame(ruteoList, columns=RuteoCols).sort_values(['Competidor', 'MatriculaAvion', 'FechaDep',])
-
-RuteoDF.to_csv("RuteoAvCargoCompMIA.csv", index=False)
+RuteoDF.to_csv("RuteoCompMIA.csv", index=False)
