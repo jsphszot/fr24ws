@@ -242,7 +242,7 @@ InfoWeekRange=list(range(InfoWeek-2, InfoWeek+1))
 # csv_name = f'CompRgnW{InfoWeek}.csv'
 # AircraftItinerario.query(f"Week in {InfoWeekRange}")\
 #     .to_csv(csv_name, index=False)
-# AircraftItinerario=pd.read_excel(io=r"C:\Users\4328091\Downloads\CompRgnW42.xlsx")
+
 
     
 # for each data row, status must be Landed, Org and DepartureUTC must not be NaN, same for Des and ArrivalUTC
