@@ -239,11 +239,9 @@ WeekToday=startTimer.isocalendar()[1]
 InfoWeek=startTimer.isocalendar()[1]-1
 InfoWeekRange=list(range(InfoWeek-2, InfoWeek+1))
 
-# csv_name = f'CompRgnW{InfoWeek}.csv'
-# AircraftItinerario.query(f"Week in {InfoWeekRange}")\
-#     .to_csv(csv_name, index=False)
-
-
+csv_name = f'CompRgnW{InfoWeek}.csv'
+AircraftItinerario.query(f"Week in {InfoWeekRange}")\
+    .to_csv(csv_name, index=False)
     
 # for each data row, status must be Landed, Org and DepartureUTC must not be NaN, same for Des and ArrivalUTC
 cleanfilt=AircraftItinerario.Org.notnull() & AircraftItinerario.Des.notnull() & (AircraftItinerario.Status == 'Landed')
