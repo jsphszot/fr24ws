@@ -8,6 +8,7 @@ Outputs are:
   <ol>
   <li>a data frame with arrival/departure time and airport, as well as flight status.</li>
   <li>former data frame but with airplane routing from and to MIA airport on single row.</li> 
+  </ol>
 
 <h6>postedflights-scraper-fr24.py</h6>
 Input is a list of Airlines and airports, output is a data frame with planned departure/arrival times for different routes by plane and flight number. 
