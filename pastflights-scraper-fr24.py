@@ -21,19 +21,22 @@ def processTime(startTime, format='s'):
     else:
         return ftotalTime
 
+def reTime(x):
+    return re.search('\d{2}:\d{2}', x)
 
 # Airline input list
 CompetenciaList = [
                     {'Airline': 'ABX', 'Code':'gb-abx',},
                     {'Airline': 'AeroLogic', 'Code':'3s-box',},
                     {'Airline': 'AeroUnion', 'Code':'6r-tno',},
-                    # {'Airline': 'Aigle Azur', 'Code':'zi-aaf',},
+#                     {'Airline': 'Aigle Azur', 'Code':'zi-aaf',},
                     {'Airline': 'AirACT', 'Code':'9t-run',},
                     {'Airline': 'Amerijet', 'Code':'m6-ajt',},
                     {'Airline': 'ASLAirlinesBelgium', 'Code':'3v-tay',},
                     {'Airline': 'AstralAviation', 'Code':'8v-acp',},
                     {'Airline': 'Atlas', 'Code':'5y-gti',},
                     {'Airline': 'Avianca', 'Code':'av-ava',},
+                    {'Airline': 'AviancaCargo', 'Code':'qt-tpa',},
                     {'Airline': 'AzulCargo', 'Code':'ad-azu',},
                     {'Airline': 'CAL CargoAirlines', 'Code':'5c-icl',},
                     {'Airline': 'Cargo Air', 'Code':'cgf',},
@@ -54,7 +57,7 @@ CompetenciaList = [
                     {'Airline': 'Martinair', 'Code':'mra',},
                     {'Airline': 'NorthernAirCargo', 'Code':'nc-nac',},
                     {'Airline': 'PolarAirCargo', 'Code':'po-pac',},
-                    # {'Airline': 'QatarAirCargo', 'Code':'qac',},
+#                     {'Airline': 'QatarAirCargo', 'Code':'qac',},
                     {'Airline': 'QatarAirways', 'Code':'qr-qtr',},
                     {'Airline': 'SaudiArabianCargo', 'Code':'sv-sva',},
                     {'Airline': 'SingaporeAirlinesCargo', 'Code':'sqc',},
@@ -65,6 +68,7 @@ CompetenciaList = [
 
 # Start timer
 startTimer = datetime.now()
+WeekToday=startTimer.isocalendar()[1]
 
 msg = ("\n{}\n{}\n{}\n".format("- "*20, startTimer.strftime('%Y-%m-%d %H:%M:%S'),"Starting New Process ..."))
 
@@ -153,40 +157,49 @@ for num in loopRange:
             fltnum = row['identification']['number']['default'] # flight number
             statusRaw = row['status']['text'] # status
 
-            deptime1 = row['time']['real']['departure'] # utc of event
-            deptime = None if deptime1 == None else datetime.fromtimestamp(deptime1).strftime('%Y-%m-%d %H:%M:%S')
+            status=re.search('[A-Z|a-z]+', statusRaw).group(0) if reTime(statusRaw) else "-"
+            statusTime=reTime(statusRaw).group(0) if reTime(statusRaw) else "-"
+
+            deptime1=row['time']['real']['departure'] # utc of event
+            deptime=None if deptime1 == None else datetime.fromtimestamp(deptime1).strftime('%Y-%m-%d %H:%M:%S')
 
             arrtime1 = row['time']['real']['arrival'] # utc of event
             arrtime = None if arrtime1 == None else datetime.fromtimestamp(arrtime1).strftime('%Y-%m-%d %H:%M:%S')
 
             try:
-                orgato = row['airport']['origin']['code']['iata']
-                orgoffset = row['airport']['origin']['timezone']['offset']
-                deplocaltime = datetime.fromtimestamp(deptime1 + orgoffset).strftime('%Y-%m-%d %H:%M:%S')
+                orgato=row['airport']['origin']['code']['iata']
+                orgoffset=row['airport']['origin']['timezone']['offset']
+                deplocaltime=datetime.fromtimestamp(deptime1 + orgoffset).strftime('%Y-%m-%d %H:%M:%S')
+                WeekUTC=int(pd.to_datetime(deptime).week)
             except TypeError:
-                orgato = None
-                deplocaltime = None
+                orgato=None
+                deplocaltime=None
+                WeekUTC=None
 
             try:
-                desato = row['airport']['destination']['code']['iata']
-                desoffset = row['airport']['destination']['timezone']['offset']
-                arrlocaltime = datetime.fromtimestamp(arrtime1 + desoffset).strftime('%Y-%m-%d %H:%M:%S')
+                desato=row['airport']['destination']['code']['iata']
+                desoffset=row['airport']['destination']['timezone']['offset']
+                arrlocaltime=datetime.fromtimestamp(arrtime1 + desoffset).strftime('%Y-%m-%d %H:%M:%S')
             except TypeError:
-                desato = None
-                arrlocaltime = None
+                desato=None
+                arrlocaltime=None
 
-            datatable.append([aln,
-                              act,
-                              rgn,
-                              callsn,
-                              fltnum,
-                              orgato,
-                              desato,
-                              deptime,
-                              arrtime,
-                              deplocaltime,
-                              arrlocaltime,
-                              statusRaw])
+            datatable.append([
+                            aln,
+                            act,
+                            rgn,
+                            callsn,
+                            fltnum,
+                            WeekUTC,
+                            orgato,
+                            desato,
+                            deptime,
+                            arrtime,
+                            deplocaltime,
+                            arrlocaltime,
+                            status,
+                            statusTime,
+                            ])
 
     count=num+1
     rgnTime=processTime(numTimer)
@@ -203,33 +216,70 @@ msg = "Finished looping in {}".format(processTime(startTimer, 'f'))
 print(msg)
 
 # write as DataFrame
-AircraftItinerario = pd.DataFrame(datatable,
-                                    columns = ['Airline',
-                                                'Aircraft',
-                                                'RegNum',
-                                                'Callsign',
-                                                'FlightNum',
-                                                'Org',
-                                                'Des',
-                                                'DepartureUTC',
-                                                'ArrivalUTC',
-                                                'DepartureLT',
-                                                'ArrivalLT',
-                                                'StatusRaw'])
+AirIteCols=[
+        'Airline',
+        'Aircraft',
+        'RegNum',
+        'Callsign',
+        'FlightNum',
+        'WeekUTC',
+        'Org',
+        'Des',
+        'DepartureUTC',
+        'ArrivalUTC',
+        'DepartureLT',
+        'ArrivalLT',
+        'Status',
+        'StatusTime',
+        ]
 
-AircraftItinerario['Week']=[x.week for x in pd.to_datetime(AircraftItinerario['DepartureUTC'])]
-
-def reTime(x):
-    return re.search('\d{2}:\d{2}', x)
-
-AircraftItinerario['Status']= [re.search('[A-Z|a-z]+', x).group(0) if reTime(x) else "-" for x in AircraftItinerario['StatusRaw']]
-AircraftItinerario['StatusTime']= [reTime(x).group(0) if reTime(x) else "-" for x in AircraftItinerario['StatusRaw']]
+AircraftItinerario=pd.DataFrame(datatable, columns=AirIteCols)
 
 WeekToday=startTimer.isocalendar()[1]
 InfoWeek=startTimer.isocalendar()[1]-1
 InfoWeekRange=list(range(InfoWeek-2, InfoWeek+1))
 
-csv_name = f'CompRgnW{InfoWeek}.csv'
-AircraftItinerario.query(f"Week in {InfoWeekRange}")\
-    .drop(['statusRaw'], axis=1)\
-    .to_csv(csv_name, index=False)
+# csv_name = f'CompRgnW{InfoWeek}.csv'
+# AircraftItinerario.query(f"Week in {InfoWeekRange}")\
+#     .to_csv(csv_name, index=False)
+
+
+    
+# for each data row, status must be Landed, Org and DepartureUTC must not be NaN, same for Des and ArrivalUTC
+cleanfilt=AircraftItinerario.Org.notnull() & AircraftItinerario.Des.notnull() & (AircraftItinerario.Status == 'Landed')
+testDF=AircraftItinerario[cleanfilt]
+
+# Select only airplanes that go through MIA for wanted Airlines
+cond1="(Org == 'MIA' or Des == 'MIA')"
+cond2="Airline in ['Atlas','Avianca', 'AviancaCargo','KalittaAir','Korean','SkyLeaseCargo','Turkish',]"
+miaflights=list(set(testDF.query(f"{cond1} and {cond2}").RegNum))
+
+ruteoList=[]
+for rgn in miaflights:
+
+    castor=testDF.query(f" RegNum == '{rgn}' ").sort_values(by=['DepartureUTC'])
+
+    aln=castor.iloc[0]['Airline']
+    rgninfo=[aln, rgn]
+
+    indexlist=[]
+    for j in list(range(len(castor))):
+
+        if castor.iloc[j].Org == 'MIA':
+            indexlist.append(j)
+
+    for p in list(range(len(indexlist)-1)):
+        castor2=castor.iloc[indexlist[p]:(indexlist[p+1]+1)]
+        dep=castor.iloc[indexlist[p]].DepartureLT
+        dwk=pd.to_datetime(dep).week
+        arv=castor.iloc[(indexlist[p+1])-1].ArrivalLT
+        rtg="-".join(castor2.Org)
+
+        rgninfo2=[dwk, rtg, dep, arv]
+
+        ruteoList.append(rgninfo + rgninfo2)
+
+RuteoCols=['Competidor', 'MatriculaAvion', 'WeekDep', 'Ruteo', 'FechaDep', 'FechaArr',]
+RuteoDF=pd.DataFrame(ruteoList, columns=RuteoCols).sort_values(['Competidor', 'MatriculaAvion', 'FechaDep',])
+
+RuteoDF.to_csv("RuteoAvCargoCompMIA.csv", index=False)
